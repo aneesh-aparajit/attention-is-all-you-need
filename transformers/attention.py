@@ -41,7 +41,7 @@ class MultiHeadAttention(nn.Module):
         self.O_proj = nn.Linear(self.num_heads*self.heads_dim, self.d_model)
 
 
-    def forward(self, Q: T.Tensor, K: T.Tensor, V: T.Tensor, mask: Optional[T.Tensor] = None) -> T.Tensor:
+    def forward(self, Q: T.Tensor, K: T.Tensor, V: T.Tensor, mask: Optional[T.Tensor] = None, return_attn: bool = False) -> T.Tensor:
         N = Q.shape[0] # batch size
         Q_len, K_len, V_len = Q.shape[1], K.shape[1], V.shape[1] # len of the sequence
 
@@ -66,6 +66,9 @@ class MultiHeadAttention(nn.Module):
         out = self.O_proj(values)
 
         print(f'out: {out.shape}')
+
+        if return_attn:
+            return out, attention
 
         return out
 
