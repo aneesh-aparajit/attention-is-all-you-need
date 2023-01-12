@@ -16,7 +16,7 @@ def scaled_dot_product(Q: T.Tensor, K: T.Tensor, V: T.Tensor, mask: Optional[T.T
     attention = F.softmax(attn_logits, dim=-1) # dim = -1 indicates the horizontal axis
 
     print(V.shape, attention.shape)
-    values = T.einsum("nhqk,nqhd->nqhd", attention, V)
+    values = T.einsum("nhqk,nvhd->nvhd", attention, V)
 
     return values, attention
 
@@ -61,7 +61,7 @@ class MultiHeadAttention(nn.Module):
 
         print(f'values: {values.shape}; attention: {attention.shape}')
 
-        values = values.reshape(N, Q_len, self.num_heads * self.heads_dim)
+        values = values.reshape(N, V_len, self.num_heads * self.heads_dim)
 
         out = self.O_proj(values)
 
@@ -75,5 +75,5 @@ if __name__ == '__main__':
     model = MultiHeadAttention(embed_dim=512, num_heads=8)
     Q = T.randn(32, 128, 512)
     K = T.randn(32, 100, 512)
-    V = T.randn(32, 128, 512)
+    V = T.randn(32, 164, 512)
     out = model.forward(Q, K, V)
